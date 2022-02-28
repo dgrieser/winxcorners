@@ -3,7 +3,7 @@ unit frmAdvanced;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.IOUtil, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Samples.Spin,
   Vcl.ExtCtrls, ShellApi, IniFiles, IPPeerClient, Data.Bind.Components,
   Data.Bind.ObjectScope, REST.Client, Vcl.ComCtrls, UCL.Form, UCL.Classes,
@@ -152,9 +152,13 @@ end;
 
 procedure TfrmAdvSettings.ReadAdvancedIni;
 var
+  settingsDir: String;
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(ExtractFilePath(ParamStr(0))+'settings.ini');
+  settingsDir := TPath.GetHomePath()+'\WinXCorners'
+  if not DirectoryExists(settingsDir)
+    then ForceDirectories(settingsDir);
+  ini := TIniFile.Create(settingsDir+'\settings.ini');
   try
     chkDelayGlobal.Checked := ini.ReadBool('Advanced','GlobalDelay',False);
     valDelayGlobal.Text := ini.ReadString('Advanced','GlobalDelayVal', '3');
@@ -183,9 +187,13 @@ end;
 
 procedure TfrmAdvSettings.SaveAdvancedIni;
 var
+  settingsDir: String;
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(ExtractFilePath(ParamStr(0))+'settings.ini');
+  settingsDir := TPath.GetHomePath()+'\WinXCorners'
+  if not DirectoryExists(settingsDir)
+    then ForceDirectories(settingsDir);
+  ini := TIniFile.Create(settingsDir+'\settings.ini');
   try
     ini.WriteBool('Advanced','GlobalDelay',chkDelayGlobal.Checked);
     ini.WriteInteger('Advanced','GlobalDelayVal', StrToInt(valDelayGlobal.Text));
