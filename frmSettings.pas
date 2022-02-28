@@ -42,7 +42,7 @@ unit frmSettings;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.IOUtil, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   XMenu, XGraphics, PNGimage, GDIPApi, GDIPObj,  XCheckbox ,XCombobox , Registry, IniFiles, DateUtils, AnimateEasing, Math;
 
@@ -544,9 +544,13 @@ end;
 
 procedure TfrmTrayPopup.LoadINI;
 var
-  ini : TIniFile;
+  settingsDir: String;
+  ini: TIniFile;
 begin
-  ini := TIniFile.Create(ExtractFilePath(ParamStr(0))+'settings.ini');
+  settingsDir := TPath.GetHomePath()+'\WinXCorners'
+  if not DirectoryExists(settingsDir)
+    then ForceDirectories(settingsDir);
+  ini := TIniFile.Create(settingsDir+'\settings.ini');
   try
     XCombo1.Caption := ini.ReadString('WinXBorders','topleft','');
     XCombo2.Caption := ini.ReadString('WinXBorders','topright','');
@@ -631,9 +635,13 @@ end;
 
 procedure TfrmTrayPopup.SaveINI;
 var
-  ini : TIniFile;
+  settingsDir: String;
+  ini: TIniFile;
 begin
-  ini := TIniFile.Create(ExtractFilePath(ParamStr(0))+'settings.ini');
+  settingsDir := TPath.GetHomePath()+'\WinXCorners'
+  if not DirectoryExists(settingsDir)
+    then ForceDirectories(settingsDir);
+  ini := TIniFile.Create(settingsDir+'\settings.ini');
   try
     ini.WriteString('WinXBorders','topleft',XCombo1.Caption);
     ini.WriteString('WinXBorders','topright',XCombo2.Caption);
@@ -803,7 +811,7 @@ begin
       and(Shell_TrayWndRect.Top>0)
       then
       begin
-      //ShowMessage('est· abajo')
+      //ShowMessage('est√° abajo')
       //posicionamos a la derecha en el systray
       Left:=Screen1.Width-Width-10;
       if Left<1 then Left:=10;
@@ -818,7 +826,7 @@ begin
       and(Shell_TrayWndRect.Top<1)
       then
       begin
-      //ShowMessage('Est· arriba');
+      //ShowMessage('Est√° arriba');
       Left:=Screen1.Width-Width-10;
       if Left<1 then Left:=10;
       WinPosition := tpTop;
@@ -832,7 +840,7 @@ begin
       and(Shell_TrayWndRect.Bottom=Screen1.Height)
       then
       begin
-      //ShowMessage('Est· a la izquierda')
+      //ShowMessage('Est√° a la izquierda')
       WinPosition := tpLeft;
       MaxLeft := Shell_TrayWndRect.Right; //+10;
       Left := MaxLeft - 20;
@@ -846,7 +854,7 @@ begin
       and(Shell_TrayWndRect.Bottom=Screen1.Height)
       then
       begin
-      //ShowMessage('Est· a la derecha');
+      //ShowMessage('Est√° a la derecha');
       WinPosition := tpRight;
       MaxLeft := Shell_TrayWndRect.Left-Width; //-10;
       Left := MaxLeft + 20;
